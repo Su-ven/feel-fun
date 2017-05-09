@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>Examples</title>
+<meta name="description" content="">
+<meta name="keywords" content="">
+<link href="" rel="stylesheet">
+<style type="text/css">
+	*{
+            margin: 0;
+            border: 0;
+            padding: 0;
+        }
+        .front, .back {
+            width: 100%;
+        }
+
+        div.bg{
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .flip-container {
+            perspective: 1000;
+            float: left;
+        }
+
+        .flipper {
+            transition: 0.6s;
+            transform-style: preserve-3d;
+            position: relative;
+            animation: bgAnimate 1s forwards;
+        }
+
+        .front, .back {
+            backface-visibility: hidden;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background-color: #000;
+        }
+
+        .back{
+            background-image: url(http://imglf2.nosdn.127.net/img/RlFDZkFQcXI4elRyejl1Zkhza09kdnBjL0FDU1VzUXBFdVNaRUs0QVl5ZDcwOWN2NW9yYzRnPT0.jpg?imageView&thumbnail=2000y1328&type=jpg&quality=96&stripmeta=0&type=jpg);
+            background-repeat: no-repeat;
+        }
+
+        .front {
+            z-index: 2;
+        }
+
+        .back {
+            transform: rotateY(180deg);
+        }
+
+        @keyframes bgAnimate{
+            from {transform: rotateY(0);}
+            to {transform: rotateY(180deg);}
+        }
+</style>
+</head>
+<body>
+    <div class="bg"></div>
+    <script type="text/javascript">
+    	window.onload = function(){
+            var bg = document.getElementsByClassName('bg')[0];
+            var bgan = new SetAnimate(bg);
+            bgan.run();
+        }
+
+        function SetAnimate(obj,widthnum,heightnum){
+            this.obj = obj;
+            this.widthnum = widthnum || 10;
+            this.heightnum = heightnum || 10;
+            this.winwidth = document.body.clientWidth || document.documentElement.clientWidth;
+            this.winheight = document.body.clientHeight || document.documentElement.clientHeight;
+            this.backwidth = this.winwidth/this.widthnum;
+            /*为不留空白，数值比计算值大一*/
+            this.backheight = (this.winheight/this.heightnum)+1;
+            this.backnum = this.widthnum*this.heightnum;
+        }
+
+        SetAnimate.prototype = {
+            createdom: function(){
+                var flipContainer = document.createElement('div');
+                var flipper = document.createElement('div');
+                var front = document.createElement('div');
+                var back = document.createElement('back');
+                flipContainer.className = 'flip-container';
+                flipper.className = 'flipper';
+                front.className = 'front';
+                back.className = 'back';
+
+                this.obj.appendChild(flipContainer);
+                flipContainer.appendChild(flipper);
+                flipper.appendChild(front);
+                flipper.appendChild(back);
+            },
+            run: function(){
+                var c_back = document.getElementsByClassName('back');
+                var c_front = document.getElementsByClassName('front');
+                var c_flipContainer = document.getElementsByClassName('flip-container');
+
+                for(var i=0; i<this.backnum; i++){
+                    this.createdom();
+                    var ratio = parseInt(i/this.widthnum);
+                    var heightnum = -ratio*this.backheight;
+                    c_front[i].style.height = this.backheight+'px';
+                    c_back[i].style.height = this.backheight+'px';
+                    c_back[i].style.backgroundSize = this.winwidth+'px' + ' auto';
+                    c_flipContainer[i].style.width = this.backwidth+'px';
+                    c_flipContainer[i].style.height = this.backheight+'px';
+                    c_back[i].style.backgroundPosition = -this.backwidth*(i-ratio*this.widthnum)+'px'+' '+heightnum+'px';
+                    c_flipContainer[i].getElementsByClassName('flipper')[0].style.animationDelay = Math.random()+'s';
+                }
+            }
+        }
+    </script>
+</body>
+</html>
